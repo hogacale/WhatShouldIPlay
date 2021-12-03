@@ -50,19 +50,52 @@
 					</thead>
 					<tbody id='gamelist'></tbody>
 				</table>
+        <p>
+        <input type="button" onclick="previousPage()" value="Previous Page">
+        <input type="button" onclick="nextPage()" value="Next Page">
+        </p>
 			</div>
 		</div>
 	</div>
 </body>
 <script type="text/javascript">
 
-displayGamesInfo()
+displayGamesInfo();
+
+function previousPage(){
+  let params = new URLSearchParams(location.search);
+	var search = params.get('search');
+	var page = params.getAll('page');
+  const url = new URL(window.location);
+	let params1 = new URLSearchParams(url.search);
+	params1.set('search',search);
+  if(page > 0)
+	 params1.set('page',page - 1);
+  url.search = params1;
+	history.pushState({}, '', url);
+  displayGamesInfo();
+}
+function nextPage(){
+  let params = new URLSearchParams(location.search);
+	var search = params.get('search');
+	var page = params.getAll('page');
+  const url = new URL(window.location);
+	let params1 = new URLSearchParams(url.search);
+	params1.set('search',search);
+	params1.set('page',parseInt(page) + 1);
+  url.search = params1;
+	history.pushState({}, '', url);
+  displayGamesInfo();
+}
 
 function displayGamesInfo() {
 	let params = new URLSearchParams(location.search);
 	var search = params.get('search');
-	var page = params.getAll('page');
-   
+	page = params.getAll('page');
+  page = parseInt(page);
+  console.log(page);
+  if(isNaN(page))
+    page = 0;
 	search = document.getElementById('search').value;
   if(search != null)
 	 document.getElementById('search').value = search;
