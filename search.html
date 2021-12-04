@@ -104,10 +104,10 @@ function displayGamesInfo() {
 	let params1 = new URLSearchParams(url.search);
 	params1.set('search',search);
 	params1.set('page',page);
-  url.search = params1;
+  	url.search = params1;
 	history.pushState({}, '', url);
   
-	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=search&search=${search}`).then(function(response) {
+	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=search&search=${search}&page=${page}`).then(function(response) {
 		console.log(response);
 		
 		const apiResponse = JSON.parse(response);
