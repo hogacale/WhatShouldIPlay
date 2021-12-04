@@ -37,17 +37,19 @@ switch ($type) {
    //debug_to_console("browse case");
        // Read the request type: game genre
        $genre = (isset($_GET['genre'])) ? $_GET['genre'] : '-1';
+       $pageNumber = (isset($_GET['page'])) ? $_GET['page'] : '-1';
+       $pageNumber = $pageNumber*25;
        //$rating = (isset($_GET['rating'])) ? $_GET['rating'] : '-1';
        if ($genre === '-1') {
           $response = $error;
        } else {
           if ($genre === 'All'){
               // Display a list of all the movies
-              $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName FROM Game g, Rating r where g.gameId=r.gameId order by name limit 50";
+              $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName FROM Game g, Rating r where g.gameId=r.gameId order by name LIMIT 25 OFFSET $pageNumber;";
           }
           else {
               // Display a list of movies based on the user selection
-              $sql = "SELECT /*g.gameId,*/ g.name, g.publisherName, r.averageRatings, g.price, g.genreName FROM Game g, Rating r where g.gameId=r.gameId AND genreName like '%$genre%' order by name limit 50";
+              $sql = "SELECT /*g.gameId,*/ g.name, g.publisherName, r.averageRatings, g.price, g.genreName FROM Game g, Rating r where g.gameId=r.gameId AND genreName like '%$genre%' order by name LIMIT 25 OFFSET $pageNumber;";
 
              // Define value(s) for 'named' parameters
              $parameterValues = array(':genre' => $genre);
@@ -66,18 +68,21 @@ switch ($type) {
          // Read the request type: game genre
 
       $search = (isset($_GET['search'])) ? $_GET['search'] : '-1';
+      $pageNumber = (isset($_GET['page'])) ? $_GET['page'] : '-1';
+      $pageNumber = $pageNumber*25;
       //echo $rating;
          if ($search === '-1') {
             $response = $error;
          } else {
             if ($search === 'All' ){
                 // Display a list of all the movies
-                echo "NO PARAMETERS";
-                $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName FROM Game g, Rating r where g.gameId=r.gameId order by name limit 50";
+                //echo "NO PARAMETERS";
+                $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName FROM Game g, Rating r where g.gameId=r.gameId order by name limit 25 OFFSET $pageNumber;";
+                //echo $sql;
             } else {
-                echo "HAS PARAMETERS";
-                $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName FROM Game g, Rating r where g.gameId=r.gameId AND g.name LIKE '%$search%' order by name limit 50";
-               echo $sql;
+                //echo "HAS PARAMETERS";
+                $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName FROM Game g, Rating r where g.gameId=r.gameId AND g.name LIKE '%$search%' order by name LIMIT 25 OFFSET $pageNumber;";
+               //echo $sql;
                // Define value(s) for 'named' parameters
                //$parameterValues = array(':rating' => $rating);
            }
