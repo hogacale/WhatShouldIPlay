@@ -52,6 +52,10 @@
 					</thead>
 					<tbody id='gamelist'></tbody>
 				</table>
+				<p>
+					<input type="button" onclick="previousPage()" value="Previous Page">
+					<input type="button" onclick="nextPage()" value="Next Page">
+				</p>
 			</div>
 		</div>
 	</div>
@@ -59,11 +63,55 @@
 <script type="text/javascript">
 displayGamesInfo()
 
+function previousPage(){
+  let params = new URLSearchParams(location.search);
+	var search = params.get('genre');
+	var page = params.getAll('page');
+  const url = new URL(window.location);
+	let params1 = new URLSearchParams(url.search);
+	params1.set('genre',search);
+  if(page > 0)
+	 params1.set('page',page - 1);
+  url.search = params1;
+	history.pushState({}, '', url);
+  displayGamesInfo();
+}
+function nextPage(){
+  let params = new URLSearchParams(location.search);
+	var search = params.get('genre');
+	var page = params.getAll('page');
+  const url = new URL(window.location);
+	let params1 = new URLSearchParams(url.search);
+	params1.set('genre',search);
+	params1.set('page',parseInt(page) + 1);
+  url.search = params1;
+	history.pushState({}, '', url);
+  displayGamesInfo();
+}
+
 function displayGamesInfo() {
-	const genre = document.getElementById('genre').value;
-	//const rating = document.getElementById('rating').value;
-	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=browse&genre=${genre}`).then(function(response) {
-		const apiResponse = JSON.parse(response)
+	let params = new URLSearchParams(location.search);
+	var search = params.get('genre');
+	page = params.getAll('page');
+  page = parseInt(page);
+  console.log(page);
+  if(isNaN(page))
+    page = 0;
+	search = document.getElementById('genre').value;
+  if(search != null)
+	 document.getElementById('genre').value = search;
+  
+	const url = new URL(window.location);
+	let params1 = new URLSearchParams(url.search);
+	params1.set('genre',search);
+	params1.set('page',page);
+  	url.search = params1;
+	history.pushState({}, '', url);
+  
+	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=browse&genre=${search}&page=${page}`).then(function(response) {
+		console.log(response);
+		
+		const apiResponse = JSON.parse(response);
 		if (apiResponse.length > 0) {
 			const tRows = prepareHTMLContent(apiResponse);
 			document.getElementById('gamelist').innerHTML = tRows;
