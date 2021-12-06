@@ -2,7 +2,7 @@ body
 {  
     margin: 0;  
     padding: 0;  
-    background-color:#6c757d;  
+    background-color:#e6eef5;  
     font-family: 'Arial';  
 }  
 .login{  
@@ -17,9 +17,14 @@ body
 }  
 h1{  
     text-align: center;  
-    color: #ffffff;  
+    color: #130a44;  
     padding: 20px;  
 }  
+h2{  
+    text-align: center;  
+    color: #0d0a4f;  
+    padding: 20px;  
+} 
 h3{  
     text-align: center;  
     color: #ff0000;

@@ -135,3 +135,31 @@ function prepareHTMLContent(list) {
 function gotoGameViewPage(clicked_id){
 	location.replace(location.origin + "/whatshouldiplay2/gameView.html?gameId=" + clicked_id);
 }
+
+function displayShoppingCart() {
+	let params = new URLSearchParams(location.search);
+	var search = params.get('genre');
+	page = params.getAll('page');
+  	page = parseInt(page);
+  if(isNaN(page))
+    page = 0;
+	search = document.getElementById('genre').value;
+  if(search != null)
+	 document.getElementById('genre').value = search;
+  
+	const url = new URL(window.location);
+	let params1 = new URLSearchParams(url.search);
+	params1.set('genre',search);
+	params1.set('page',page);
+  	url.search = params1;
+	history.pushState({}, '', url);
+  
+	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=cart&view=view`).then(function(response) {
+		console.log(response);
+		const apiResponse = JSON.parse(response);
+		if (apiResponse.length > 0) {
+			const tRows = prepareHTMLContent(apiResponse);
+			document.getElementById('shoppingcart').innerHTML = tRows;
+		}
+	});
+}

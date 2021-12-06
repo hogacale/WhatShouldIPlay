@@ -24,7 +24,7 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-12">
-				<h2>Browse Games</h2>
+				<h2>Shopping Cart</h2>
 				<p>Filter games by genre:
 					<select onchange="displayGamesInfo()" id="genre">
 						<option value="All" selected='selected'>All</option>
@@ -41,14 +41,7 @@
 						<option value="Strategy">Strategy</option>
 					</select>
 				</p>
-				<p>Filter games by ratings:
-					<select onchange="displayGamesInfo()" id="rating">
-						<option value="All" selected='selected'>All</option>
-						<option value=25>Greater than 25</option>
-						<option value=50>Greater than 50</option>
-						<option value=100>Greater than 100</option>
-					</select>
-				</p>
+				
 				<table class='table table-bordered'>
 					<thead style="font-weight: bold">
 						<th>Name</th>
@@ -57,7 +50,7 @@
 						<th>Price</th>
 						<th>Genre</th>
 					</thead>
-					<tbody id='gamelist'></tbody>
+					<tbody id='shoppingcart'></tbody>
 				</table>
 				<p>
 					<input type="button" onclick="previousPage()" value="Previous Page">
@@ -67,11 +60,12 @@
 		</div>
 	</div>
 </body>
-<script type="text/javascript" src="index.js">displayGamesInfo()
+<script type="text/javascript" src="index.js">
+//displayGamesInfo()
 
 </script>
 <script type="text/javascript">
-displayGamesInfo()
+//displayGamesInfo()
 
 function previousPage(){
   let params = new URLSearchParams(location.search);
@@ -118,13 +112,12 @@ function displayGamesInfo() {
   	url.search = params1;
 	history.pushState({}, '', url);
   
-	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=browse&genre=${search}&page=${page}`).then(function(response) {
+	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=cart&genre=${search}&page=${page}`).then(function(response) {
 		console.log(response);
-		
 		const apiResponse = JSON.parse(response);
 		if (apiResponse.length > 0) {
 			const tRows = prepareHTMLContent(apiResponse);
-			document.getElementById('gamelist').innerHTML = tRows;
+			document.getElementById('shoppingcart').innerHTML = tRows;
 		}
 	});
 }

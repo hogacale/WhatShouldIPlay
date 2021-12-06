@@ -6,6 +6,13 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
 		integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+	<style>
+		h2{  
+			text-align: center;  
+			color: #0d0a4f;  
+			padding: 20px;  
+		} 
+	</style>
 </head>
 
 <body>
@@ -15,13 +22,14 @@
 <!--end of nav bar-->
 
 	<div class="container-fluid">
-		<p>Search games:</p>
+		<h2>Search Games</h2>
 		<form>
 			<input type="text" placeholder="Search..." id="search" selected='selected'>
 			<input type="button" onclick="changeFilter()" value="Search">
 		</form>
 		<div class="row">
 			<div class="col-12">
+				<br>
 				<p>Filter games by genre:
 					<select onchange="changeFilter()" id="genre">
 						<option value="All" selected='selected'>All</option>
@@ -82,7 +90,6 @@
 				</p>
 				<table class='table table-bordered'>
 					<thead style="font-weight: bold">
-						<!-- <th>Game Id</th> -->
 						<th>Name</th>
 						<th>Publisher</th>
 						<th>Average Rating</th>
