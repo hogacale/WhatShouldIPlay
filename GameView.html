@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<!-- Include bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+		integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+</head>
+
+<body>
+<!--Nav bar-->
+<div id="nav-placeholder"></div>
+<script>$(function(){$("#nav-placeholder").load("nav.html");});</script>
+<!--end of nav bar-->
+<section class="jumbotron text-center">
+	<div class="container">
+           <h1 class="jumbotron-heading" id="gamePage-gameName">Game Title:</h1>
+    </div>
+    </section>
+    
+  <div class="container-fluid">
+  <div class="row">
+    <div class="col-md-8 order-md-1" >
+    <div class="list-group">
+  <div href="#" class="list-group-item list-group-item-action active">
+    <div class="d-flex w-100 justify-content-between">
+      <h3 class="mb-3">Description</h3>
+    </div>
+  </div>
+  <div class="list-group-item list-group-item-action">
+    <p class="mb-1" id="gamePage-description">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+  </div>
+</div>
+    </div>
+    <div class="col-md-4 order-md-2 mb-4">
+      <h3 class="d-flex justify-content-between align-items-center mb-3">Other information</h3>
+        <ul class="list-group mb-3">
+          <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+              <h6 clas="my-0"> Release Date </h6>
+              <small class="text-muted">Day the game was released</small>
+            </div>
+            <span class="text-muted" id="gamePage-releaseDate" placeholder="$0">7/25/2006</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+              <h6 clas="my-0"> Publisher </h6>
+              <small class="text-muted">Who published the game</small>
+            </div>
+            <span class="text-muted" id="gamePage-publisher" placeholder="$0">EA</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+              <h6 clas="my-0"> Genres </h6>
+              <small class="text-muted">Genres the game falls under</small>
+            </div>
+            <span class="text-muted" id="gamePage-genres" placeholder="$0">Action</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+              <h6 clas="my-0"> Categories </h6>
+              <small class="text-muted">Categories of the game</small>
+            </div>
+            <span class="text-muted" id="gamePage-categories" placeholder="$0">Single-Player</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+              <h6 clas="my-0"> Platorms </h6>
+              <small class="text-muted">Platforms the game is available for</small>
+            </div>
+            <span class="text-muted" id="gamePage-platforms" placeholder="$0">Windows</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+              <h6 clas="my-0"> Positive Rating </h6>
+              <small class="text-muted">Number of positive ratings</small>
+            </div>
+            <span class="text-muted" id="gamePage-postiveRatings" placeholder="$0">15000</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+              <h6 clas="my-0"> Negative Rating </h6>
+              <small class="text-muted">Number of Negative Ratings</small>
+            </div>
+            <span class="text-muted" id="gamePage-negativeRatings" placeholder="$0">7561</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+              <h6 clas="my-0"> Average Rating </h6>
+              <small class="text-muted">The percent postive rating</small>
+            </div>
+            <span class="text-muted" id="gamePage-averageRatings" placeholder="$0">15%</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+              <h6 clas="my-0"> Price </h6>
+              <small class="text-muted">Price of the game</small>
+            </div>
+            <span class="text-muted" id="gamePage-gamePrice" placeholder="$0">0$</span>
+          </li>
+        </ul>
+      </div>
+      </div>
+      <div clas="row">
+        <div class="col-md-8 order-md-1">
+          <button class=class="btn btn-primary btn-lg btn-block" type="submit">Add to Cart</button>
+        </div>
+      </div>
+  </div>
+</body>
+<script type="text/javascript" src="gameView.js"></script>
+</html>
