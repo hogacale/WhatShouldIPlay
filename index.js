@@ -88,12 +88,12 @@ function displayNewGames(){
 	if(rating == "")
 		rating = null;
 		
-	console.log("Genre: " + genre);
-	console.log("Search: " + search);
-	console.log("Page: " + page);
-	console.log('http://localhost/whatshouldiplay2/gameApi.php?type=search&search='+search+'&page='+page + '&genre=' + genre + '&publisher=' + publisher + '&rating=' + rating);
+	//console.log("Genre: " + genre);
+	//console.log("Search: " + search);
+	//console.log("Page: " + page);
+	//console.log('http://localhost/whatshouldiplay2/gameApi.php?type=search&search='+search+'&page='+page + '&genre=' + genre + '&publisher=' + publisher + '&rating=' + rating);
 	getData('http://localhost/whatshouldiplay2/gameApi.php?type=search&search='+search+'&page='+page + '&genre=' + genre + '&publisher=' + publisher + '&rating=' + rating).then(function(response) {
-		console.log(response);
+		//console.log(response);
 		
 		const apiResponse = JSON.parse(response);
 		if (apiResponse.length > 0) {

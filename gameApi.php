@@ -34,34 +34,15 @@ if (isset($_GET['type'])){
 // Define response based on the user request (input)
 switch ($type) {
   case 'browse':
+   $random = (isset($_GET['random'])) ? $_GET['random'] : '-1';
    //debug_to_console("browse case");
        // Read the request type: game genre
-       $genre = (isset($_GET['genre'])) ? $_GET['genre'] : '-1';
-       $pageNumber = (isset($_GET['page'])) ? $_GET['page'] : '-1';
-       $pageNumber = $pageNumber*25;
-       //$rating = (isset($_GET['rating'])) ? $_GET['rating'] : '-1';
-       if ($genre === '-1') {
-          $response = $error;
-       } else {
-          if ($genre === 'All'){
-              // Display a list of all the movies
-              $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName FROM Game g, Rating r where g.gameId=r.gameId order by name LIMIT 25 OFFSET $pageNumber;";
-          }
-          else {
-              // Display a list of movies based on the user selection
-              $sql = "SELECT /*g.gameId,*/ g.name, g.publisherName, r.averageRatings, g.price, g.genreName FROM Game g, Rating r where g.gameId=r.gameId AND genreName like '%$genre%' order by name LIMIT 25 OFFSET $pageNumber;";
-
-             // Define value(s) for 'named' parameters
-             $parameterValues = array(':genre' => $genre);
-
-             
-         }
+       $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName, g.gameId FROM Game g, Rating r where g.gameId=r.gameId order by Rand($random) LIMIT 25;";
 
          // Execute SQL statement and obtain data
          //$response = getAllRecords($sql, $db, $parameterValues);
          $response = getAllRecords($sql, $db);
         
-      }
       //echo json_encode($response);
       break;
    case 'search':

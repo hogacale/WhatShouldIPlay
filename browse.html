@@ -17,30 +17,6 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-12">
-				<p>Filter games by genre:
-					<select onchange="displayGamesInfo()" id="genre">
-						<option value="All" selected='selected'>All</option>
-						<option value="Action">Action</option>
-						<option value="Adventure">Adventure</option>
-						<option value="Animation">Animation</option>
-						<option value="Casual">Casual</option>
-						<option value="Indie">Indie</option>
-						<option value="Massively Multiplayer">Massively Multiplayer</option>
-						<option value="Racing">Racing</option>
-						<option value="RPG">RPG</option>
-						<option value="Simulation">Simulation</option>
-						<option value="Sports">Sports</option>
-						<option value="Strategy">Strategy</option>
-					</select>
-				</p>
-				<p>Filter games by ratings:
-					<select onchange="displayGamesInfo()" id="rating">
-						<option value="All" selected='selected'>All</option>
-						<option value=25>Greater than 25</option>
-						<option value=50>Greater than 50</option>
-						<option value=100>Greater than 100</option>
-					</select>
-				</p>
 				<table class='table table-bordered'>
 					<thead style="font-weight: bold">
 						<!-- <th>Game Id</th> -->
@@ -53,8 +29,7 @@
 					<tbody id='gamelist'></tbody>
 				</table>
 				<p>
-					<input type="button" onclick="previousPage()" value="Previous Page">
-					<input type="button" onclick="nextPage()" value="Next Page">
+					<input type="button" onclick="nextPage()" value="Random Page">
 				</p>
 			</div>
 		</div>
@@ -75,41 +50,36 @@ function previousPage(){
   url.search = params1;
 	history.pushState({}, '', url);
   displayGamesInfo();
+  $('html, body').animate({ scrollTop: 0 }, 'fast');
 }
 function nextPage(){
-  let params = new URLSearchParams(location.search);
-	var search = params.get('genre');
-	var page = params.getAll('page');
   const url = new URL(window.location);
 	let params1 = new URLSearchParams(url.search);
-	params1.set('genre',search);
-	params1.set('page',parseInt(page) + 1);
+	params1.set('random',Math.floor(Math.random() * 150000));
   url.search = params1;
 	history.pushState({}, '', url);
   displayGamesInfo();
+  $('html, body').animate({ scrollTop: 0 }, 'fast');
 }
 
 function displayGamesInfo() {
 	let params = new URLSearchParams(location.search);
-	var search = params.get('genre');
-	page = params.getAll('page');
-  page = parseInt(page);
-  console.log(page);
-  if(isNaN(page))
-    page = 0;
-	search = document.getElementById('genre').value;
-  if(search != null)
-	 document.getElementById('genre').value = search;
+  var search = params.get('random');
+
+  if(search === null){
+    search = Math.floor(Math.random() * 150000);
+  }
+
+
   
 	const url = new URL(window.location);
 	let params1 = new URLSearchParams(url.search);
-	params1.set('genre',search);
-	params1.set('page',page);
-  	url.search = params1;
+	params1.set('random',search);
+  url.search = params1;
 	history.pushState({}, '', url);
   
-	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=browse&genre=${search}&page=${page}`).then(function(response) {
-		console.log(response);
+	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=browse&genre=${search}&random=${search}`).then(function(response) {
+		//console.log(response);
 		
 		const apiResponse = JSON.parse(response);
 		if (apiResponse.length > 0) {
@@ -139,10 +109,12 @@ function prepareHTMLContent(list) {
 	let output = "";
 	for(let i in list ) {
 	const games = list[i];
-		output += `<tr><td>${games.name}</td><td>${games.publisherName}</td><td>${games.averageRatings}</td><td>${games.price}</td><td>${games.genreName}</td></tr>`;
+		output += `<tr><td>${games.name}</td><td>${games.publisherName}</td><td>${games.averageRatings}</td><td>${games.price}</td><td>${games.genreName}</td><td><button onClick="gotoGameViewPage(this.id)" id=${games.gameId}>More Info</button></td></tr>`;
 	}
 	return output;
 }
-
+function gotoGameViewPage(clicked_id){
+	location.replace(location.origin + "/whatshouldiplay2/gameView.html?gameId=" + clicked_id);
+}
 </script>
 </html>
