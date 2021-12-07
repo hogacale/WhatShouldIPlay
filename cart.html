@@ -25,22 +25,6 @@
 		<div class="row">
 			<div class="col-12">
 				<h2>Shopping Cart</h2>
-				<p>Filter games by genre:
-					<select onchange="displayGamesInfo()" id="genre">
-						<option value="All" selected='selected'>All</option>
-						<option value="Action">Action</option>
-						<option value="Adventure">Adventure</option>
-						<option value="Animation">Animation</option>
-						<option value="Casual">Casual</option>
-						<option value="Indie">Indie</option>
-						<option value="Massively Multiplayer">Massively Multiplayer</option>
-						<option value="Racing">Racing</option>
-						<option value="RPG">RPG</option>
-						<option value="Simulation">Simulation</option>
-						<option value="Sports">Sports</option>
-						<option value="Strategy">Strategy</option>
-					</select>
-				</p>
 				
 				<table class='table table-bordered'>
 					<thead style="font-weight: bold">
@@ -48,7 +32,7 @@
 						<th>Publisher</th>
 						<th>Average Rating</th>
 						<th>Price</th>
-						<th>Genre</th>
+						<th>Remove</th>
 					</thead>
 					<tbody id='shoppingcart'></tbody>
 				</table>
@@ -61,11 +45,10 @@
 	</div>
 </body>
 <script type="text/javascript" src="index.js">
-//displayGamesInfo()
+displayShoppingCart();
 
 </script>
 <script type="text/javascript">
-//displayGamesInfo()
 
 function previousPage(){
   let params = new URLSearchParams(location.search);
@@ -93,7 +76,7 @@ function nextPage(){
   displayGamesInfo();
 }
 
-function displayGamesInfo() {
+function displayShoppingCart() {
 	let params = new URLSearchParams(location.search);
 	var search = params.get('genre');
 	page = params.getAll('page');
@@ -112,8 +95,8 @@ function displayGamesInfo() {
   	url.search = params1;
 	history.pushState({}, '', url);
   
-	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=cart&genre=${search}&page=${page}`).then(function(response) {
-		console.log(response);
+	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=ViewCart`).then(function(response) {
+		//console.log(response);
 		const apiResponse = JSON.parse(response);
 		if (apiResponse.length > 0) {
 			const tRows = prepareHTMLContent(apiResponse);
