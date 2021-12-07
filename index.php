@@ -1,4 +1,8 @@
+
+
 <?php 
+require('login.php');
+/*
 session_start();
 session_unset();
 session_destroy();
@@ -26,9 +30,14 @@ if(isset($_POST['login']))
         $error = "<h3>Invalid Username or Password.</h3>";  
     }
 }
- ?>
+if(isset($_POST['register']))
+{
+    include('register.php');
+}
+*/
+?>
 
-
+<!--
 <!DOCTYPE html>    
 <html>    
 <head>    
@@ -47,8 +56,11 @@ if(isset($_POST['login']))
         <br><br>    
         <input type="submit" name="login" id="log" value="Login">       
         <br><br>
+        <input type="submit" name="register" id="register" value="Register">  
     </form>   
+-->
     <?php 
+    /*
     if (isset($error)){
         echo $error;
     }
@@ -67,6 +79,5 @@ function getAllRecords($sql, $db){
    $response = $stm->fetchAll(PDO::FETCH_ASSOC);
 return $response;
 }
-?>
-
+?> -->
 
