@@ -37,6 +37,7 @@ switch ($type) {
    $random = (isset($_GET['random'])) ? $_GET['random'] : '-1';
    //debug_to_console("browse case");
        // Read the request type: game genre
+
        $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName, g.gameId FROM Game g, Rating r where g.gameId=r.gameId order by Rand($random) LIMIT 25;";
 
          // Execute SQL statement and obtain data
@@ -50,6 +51,7 @@ switch ($type) {
 
       $search = (isset($_GET['search'])) ? $_GET['search'] : '-1';
       $pageNumber = (isset($_GET['page'])) ? $_GET['page'] : '-1';
+
       $pageNumber = (int)$pageNumber*25;
       $genre = (isset($_GET['genre'])) ? $_GET['genre'] : '-1';
       $publisher = (isset($_GET['publisher'])) ? $_GET['publisher'] : '-1';

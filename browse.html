@@ -50,6 +50,7 @@ function previousPage(){
   url.search = params1;
 	history.pushState({}, '', url);
   displayGamesInfo();
+
   $('html, body').animate({ scrollTop: 0 }, 'fast');
 }
 function nextPage(){
