@@ -15,7 +15,14 @@
 <!--end of nav bar-->
 
 	<div class="container-fluid">
-		<p>Search games:</p>
+  <style>
+        h2{
+            text-align: center;
+            color: #0d0a4f;
+            padding: 20px;
+        } 
+    </style>
+<h2>Search Games</h2>
 		<form>
 			<input type="text" placeholder="Search..." id="search" selected='selected'>
 			<input type="button" onclick="changeFilter()" value="Search">
@@ -94,16 +101,12 @@
 				</table>
         <p>
         <input type="button" onclick="previousPage()" value="Previous Page">
-
         <label id="pageNumber"></label>
-
         <input type="button" onclick="nextPage()" value="Next Page">
         </p>
 			</div>
 		</div>
 	</div>
 </body>
-
 <script type="text/javascript" src="index.js"></script>
-
 </html>

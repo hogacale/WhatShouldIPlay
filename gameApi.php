@@ -9,23 +9,7 @@ include('pdo_connect.php');
 $parameterValues = null; // Set the $parameterValues to null
 $type = null;
 $error = "Invalid request";
-class TableRows extends RecursiveIteratorIterator {
-   function __construct($it) {
-       parent::__construct($it, self::LEAVES_ONLY);
-   }
 
-   function current() {
-       return "<td style='width: 150px; border: 1px solid black;'>" . parent::current(). "</td>";
-   }
-
-   function beginChildren() {
-       echo "<tr>";
-   }
-
-   function endChildren() {
-       echo "</tr>" . "\n";
-   }
-}
 
 if (isset($_GET['type'])){
    $type = $_GET['type'];
@@ -35,10 +19,11 @@ if (isset($_GET['type'])){
 switch ($type) {
   case 'browse':
    $random = (isset($_GET['random'])) ? $_GET['random'] : '-1';
+   $userId = (isset($_GET['userId'])) ? $_GET['userId'] : '-1';
    //debug_to_console("browse case");
+   
        // Read the request type: game genre
-
-       $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName, g.gameId FROM Game g, Rating r where g.gameId=r.gameId order by Rand($random) LIMIT 25;";
+       $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName, g.gameId FROM Game g, Rating r, User u where g.gameId=r.gameId and g.requiredAge <= $userId and g.requiredAge <= u.age and u.userId=$userId order by Rand($random) LIMIT 25;";
 
          // Execute SQL statement and obtain data
          //$response = getAllRecords($sql, $db, $parameterValues);
@@ -51,11 +36,11 @@ switch ($type) {
 
       $search = (isset($_GET['search'])) ? $_GET['search'] : '-1';
       $pageNumber = (isset($_GET['page'])) ? $_GET['page'] : '-1';
-
       $pageNumber = (int)$pageNumber*25;
       $genre = (isset($_GET['genre'])) ? $_GET['genre'] : '-1';
       $publisher = (isset($_GET['publisher'])) ? $_GET['publisher'] : '-1';
       $rating = (isset($_GET['rating'])) ? $_GET['rating'] : '-1';
+      $userId = (isset($_GET['userId'])) ? $_GET['userId'] : '-1';
       
       if($search === 'null'){
          $search = '';
@@ -77,7 +62,7 @@ switch ($type) {
             $response = $error;
          } else {
            //All values
-               $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName, g.gameId FROM Game g, Rating r where g.publisherName like '$publisher%' AND g.gameId=r.gameId AND g.name LIKE '%$search%' AND genreName like '%$genre%' AND r.averageRatings >= $rating order by name LIMIT 25 OFFSET $pageNumber;";
+               $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName, g.gameId FROM Game g, Rating r, User u where g.publisherName like '$publisher%' AND g.gameId=r.gameId AND g.name LIKE '%$search%' AND genreName like '%$genre%' AND r.averageRatings >= $rating and g.requiredAge <= u.age and u.userId=$userId order by name LIMIT 25 OFFSET $pageNumber;";
                //echo $sql;
            }
            // Execute SQL statement and obtain data
@@ -99,7 +84,50 @@ switch ($type) {
       $response = getAllRecords($sql, $db);
       
       break;
+      
+   case 'AddtoCart':
+      $gameId = $gameId = (isset($_GET['gameId'])) ? $_GET['gameId'] : '-1';
+      $userId = $userId = (isset($_GET['userId'])) ? $_GET['userId'] : '-1';
+      
+      $scId = getCountRecords("select scId from ShoppingCart order by scId DESC limit 1;", $db);
+      $scId = $scId[0][0] + 1;
+      if ($gameId === '-1') {
+            $response = $error;
+         } else {
+           //All values
+               $sql = "INSERT INTO ShoppingCart VALUES ($userId, null ,$gameId,$scId);";
+               //echo $sql;
+           }
+      echo "success!";
+      $response = getAllRecords($sql, $db);
+   break;
+   
+   case 'viewCart':
+         $userId = (isset($_GET['userId'])) ? $_GET['userId'] : '-1';
+         if ($userId === '-1') {
+               $response = $error;
+            } else {
+            
+               $sql = "SELECT g.gameId, g.name, g.publisherName, r.averageRatings, g.price, c.scId FROM Game g, Rating r, User u, ShoppingCart c WHERE u.userId=c.userId and g.gameId=c.gameId and c.userId=$userId and r.gameId=g.gameId ORDER BY g.name LIMIT 25;";
+               //echo $sql;
 
+
+              }
+         $response = getAllRecords($sql, $db);
+      break;
+      
+   case 'removeFromCart':
+      $scId = (isset($_GET['scId'])) ? $_GET['scId'] : '-1';
+      if ($userId === '-1') {
+               $response = $error;
+            } else {
+            
+               $sql = "Delete from ShoppingCart where scId=$scId;";
+               //echo $sql;
+              }
+         $response = getAllRecords($sql, $db);
+      break;
+      
    default :
       $response = array();
       break;
@@ -118,7 +146,15 @@ function getAllRecords($sql, $db){
 return $response;
 }
 
-
+function getCountRecords($sql, $db){
+   // prepare SQL statement
+   $stm = $db->prepare($sql);
+   // execute SQL statement
+   $stm->execute();
+   // fetch all records
+   $response = $stm->fetchAll(PDO::FETCH_BOTH);
+return $response;
+}
 
 /*
 function getAllRecords($sql, $db, $values = null){

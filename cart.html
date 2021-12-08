@@ -35,6 +35,11 @@
 						<th>Remove</th>
 					</thead>
 					<tbody id='shoppingcart'></tbody>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><b>Total Price: </b><p id="totalPrice"></p></td>
+          <td></td>
 				</table>
 				<p>
 					<input type="button" onclick="previousPage()" value="Previous Page">
@@ -44,12 +49,11 @@
 		</div>
 	</div>
 </body>
-<script type="text/javascript" src="index.js">
-displayShoppingCart();
 
-</script>
 <script type="text/javascript">
-
+displayShoppingCart()
+var totalPrice = 0;
+var gameCount = 0;
 function previousPage(){
   let params = new URLSearchParams(location.search);
 	var search = params.get('genre');
@@ -76,26 +80,10 @@ function nextPage(){
   displayGamesInfo();
 }
 
-function displayShoppingCart() {
-	let params = new URLSearchParams(location.search);
-	var search = params.get('genre');
-	page = params.getAll('page');
-  page = parseInt(page);
-  console.log(page);
-  if(isNaN(page))
-    page = 0;
-	search = document.getElementById('genre').value;
-  if(search != null)
-	 document.getElementById('genre').value = search;
+function displayShoppingCart() {  
+  let userId = sessionStorage.getItem('userId');
   
-	const url = new URL(window.location);
-	let params1 = new URLSearchParams(url.search);
-	params1.set('genre',search);
-	params1.set('page',page);
-  	url.search = params1;
-	history.pushState({}, '', url);
-  
-	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=viewCart`).then(function(response) {
+	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=viewCart&userId=${userId}`).then(function(response) {
 		//console.log(response);
 		const apiResponse = JSON.parse(response);
 		if (apiResponse.length > 0) {
@@ -104,7 +92,6 @@ function displayShoppingCart() {
 		}
 	});
 }
-
 function getData(url) {
 	if (url) {
 		const task = new Promise( function(resolve, reject) {
@@ -122,13 +109,48 @@ function getData(url) {
 }
 
 function prepareHTMLContent(list) {
+  totalPrice = 0;
 	let output = "";
+  gameCount = 0;
 	for(let i in list ) {
 	const games = list[i];
-		output += `<tr><td>${games.name}</td><td>${games.publisherName}</td><td>${games.averageRatings}</td><td>${games.price}</td><td>${games.genreName}</td></tr>`;
-	}
+		output += `<tr><td>${games.name} <button onClick="gotoGameViewPage(this.id)" id=${games.gameId}>More Info</button></td><td>${games.publisherName}</td><td>${games.averageRatings}</td><td>${games.price}</td><td><button onClick="removeFromCart(this.id)" id=${games.scId}>Remove</button></td></tr>`;
+	  totalPrice += parseFloat(games.price);
+    gameCount += 1;
+    console.log(gameCount);
+  }
+  document.getElementById('totalPrice').innerHTML = totalPrice;
+  console.log("Total Price" + gameCount);
+
 	return output;
 }
 
+function removeFromCart(clicked_id){
+  let userId = sessionStorage.getItem('userId');
+  
+	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=removeFromCart&scId=${clicked_id}`).then(function(response) {
+		//console.log(response);
+	});
+  console.log("Before sleep");
+  sleep(25);
+  console.log("After sleep");
+  gameCount -= 1;
+  if(gameCount <= 0){
+    window.location.reload();
+  }
+  displayShoppingCart();
+  
+}
+function gotoGameViewPage(clicked_id){
+	location.replace(location.origin + "/whatshouldiplay2/gameView.html?gameId=" + clicked_id);
+}
+
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
 </script>
 </html>

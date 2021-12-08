@@ -6,6 +6,13 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
 		integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <style>
+        h2{
+            text-align: center;
+            color: #0d0a4f;
+            padding: 20px;
+        } 
+    </style>
 </head>
 
 <body>
@@ -14,6 +21,7 @@
 <script>$(function(){$("#nav-placeholder").load("nav.html");});</script>
 <!--end of nav bar-->
 
+<h2>Browse Games</h2>
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-12">
@@ -50,7 +58,6 @@ function previousPage(){
   url.search = params1;
 	history.pushState({}, '', url);
   displayGamesInfo();
-
   $('html, body').animate({ scrollTop: 0 }, 'fast');
 }
 function nextPage(){
@@ -64,6 +71,7 @@ function nextPage(){
 }
 
 function displayGamesInfo() {
+  let userId = sessionStorage.getItem('userId');
 	let params = new URLSearchParams(location.search);
   var search = params.get('random');
 
@@ -79,7 +87,7 @@ function displayGamesInfo() {
   url.search = params1;
 	history.pushState({}, '', url);
   
-	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=browse&genre=${search}&random=${search}`).then(function(response) {
+	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=browse&genre=${search}&random=${search}&userId=${userId}`).then(function(response) {
 		//console.log(response);
 		
 		const apiResponse = JSON.parse(response);

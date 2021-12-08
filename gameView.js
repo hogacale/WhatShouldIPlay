@@ -74,3 +74,24 @@ function sleep(milliseconds) {
     }
   }
 }
+
+function addToCart(){
+	let params = new URLSearchParams(location.search);
+	var gameId = params.get('gameId');
+	let userId = sessionStorage.getItem('userId');
+	console.log(userId + gameId);
+	
+	
+	getData('http://localhost/whatshouldiplay2/gameApi.php?type=AddtoCart&gameId='+gameId + '&userId=' + userId).then(function(response) {
+		console.log(response);
+		
+		const apiResponse = JSON.parse(response);
+		if (apiResponse.length > 0) {
+			const tRows = prepareHTMLContent(apiResponse);
+			return true;
+		}
+		return false;
+	});
+	
+	alert("Item added to cart");
+}

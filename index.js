@@ -36,6 +36,7 @@ function nextPage(){
 }
 
 function changeFilter() {
+	var gameCount = 0;
 	let params = new URLSearchParams(location.search);
 	var search = params.get('search');
 	var genre = params.get('genre');
@@ -67,6 +68,10 @@ function changeFilter() {
   	url.search = params1;
 	history.pushState({}, '', url);
 	
+	  	if(gameCount < 1){
+  		window.location.reload();
+  	}
+	
   	displayNewGames();
 }
 
@@ -88,11 +93,12 @@ function displayNewGames(){
 	if(rating == "")
 		rating = null;
 		
+	let userId = sessionStorage.getItem('userId');
 	//console.log("Genre: " + genre);
 	//console.log("Search: " + search);
 	//console.log("Page: " + page);
 	//console.log('http://localhost/whatshouldiplay2/gameApi.php?type=search&search='+search+'&page='+page + '&genre=' + genre + '&publisher=' + publisher + '&rating=' + rating);
-	getData('http://localhost/whatshouldiplay2/gameApi.php?type=search&search='+search+'&page='+page + '&genre=' + genre + '&publisher=' + publisher + '&rating=' + rating).then(function(response) {
+	getData('http://localhost/whatshouldiplay2/gameApi.php?type=search&search='+search+'&page='+page + '&genre=' + genre + '&publisher=' + publisher + '&rating=' + rating + '&userId=' + userId).then(function(response) {
 		//console.log(response);
 		
 		const apiResponse = JSON.parse(response);
@@ -125,9 +131,11 @@ function getData(url) {
 
 function prepareHTMLContent(list) {
 	let output = "";
+	gameCount = 0;
 	for(let i in list ) {
 	const games = list[i];
 		output += `<tr><td>${games.name}</td><td>${games.publisherName}</td><td>${games.averageRatings}</td><td>${games.price}</td><td>${games.genreName}</td><td><button onClick="gotoGameViewPage(this.id)" id=${games.gameId}>More Info</button></td></tr>`;
+		gameCount += 1;
 	}
 	return output;
 }

@@ -1,6 +1,6 @@
 <?php  //Start the Session
 session_start();
- require('pdo_connect.php');
+ require('sqli_connect.php');
 //3. If the form is submitted or not.
 //3.1 If the form is submitted
 if (isset($_POST['username']) and isset($_POST['password']) and isset($_POST['age'])){
@@ -39,6 +39,11 @@ $userId = $quantity + 1;
   	mysqli_query($connection, $query);
   	$_SESSION['username'] = $username;
     $username = $_SESSION['username'];
+    $user_check_query = "SELECT userId FROM User WHERE username='$username' and password='$password';";
+   $result = mysqli_query($connection, $user_check_query) or die(mysqli_error($connection));
+   $result = $result->fetch_array();
+   $quantity = intval($result[0]);
+   echo '<script type="text/javascript">sessionStorage.setItem("userId",'.$quantity.');</script>';
     echo '<script type="text/javascript"> window.open("index.html","_self");</script>';
     }
   }
