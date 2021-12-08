@@ -95,7 +95,7 @@ function displayShoppingCart() {
   	url.search = params1;
 	history.pushState({}, '', url);
   
-	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=ViewCart`).then(function(response) {
+	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=viewCart`).then(function(response) {
 		//console.log(response);
 		const apiResponse = JSON.parse(response);
 		if (apiResponse.length > 0) {
