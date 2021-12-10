@@ -1,12 +1,15 @@
 displayNewGames();
 
+var gamePrice = 0;
+var totalPrice = 0;
+
 function displayNewGames(){
 	console.log("Refreshing page");
 	let params = new URLSearchParams(location.search);
 	var gameId = params.get('gameId');
+	let userId = sessionStorage.getItem('userId');
 	
-	
-	getData('http://localhost/whatshouldiplay2/gameApi.php?type=gameView&gameId='+gameId).then(function(response) {
+	getData('http://localhost/whatshouldiplay2/gameApi.php?type=gameView&gameId='+gameId + '&userId=' + userId).then(function(response) {
 		console.log(response);
 		
 		const apiResponse = JSON.parse(response);
@@ -51,7 +54,9 @@ function prepareHTMLContent(list) {
 		document.getElementById('gamePage-negativeRatings').innerHTML = games.totalNegative;
 		document.getElementById('gamePage-averageRatings').innerHTML = games.averageRatings;
 		document.getElementById('gamePage-gamePrice').innerHTML = "$" + games.price;
-		
+		gamePrice = parseFloat(games.price);
+		totalPrice = parseFloat(games.totalPrice);
+		console.log("Total price=" + totalPrice);
 		//output += `<tr><td>${games.name}</td><td>${games.publisherName}</td><td>${games.averageRatings}</td><td>${games.price}</td><td>${games.genreName}</td></tr>`;
 	}
 	return output;
@@ -79,10 +84,12 @@ function addToCart(){
 	let params = new URLSearchParams(location.search);
 	var gameId = params.get('gameId');
 	let userId = sessionStorage.getItem('userId');
-	console.log(userId + gameId);
 	
+	totalPrice += gamePrice;
+	console.log(totalPrice + gamePrice);
+	totalPrice = Math.round(totalPrice * 100)/100;
 	
-	getData('http://localhost/whatshouldiplay2/gameApi.php?type=AddtoCart&gameId='+gameId + '&userId=' + userId).then(function(response) {
+	getData('http://localhost/whatshouldiplay2/gameApi.php?type=AddtoCart&gameId='+gameId + '&userId=' + userId + '&totalPrice=' + totalPrice).then(function(response) {
 		console.log(response);
 		
 		const apiResponse = JSON.parse(response);

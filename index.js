@@ -1,5 +1,5 @@
 displayNewGames();
-
+var gameCount=0;
 function previousPage(){
   let params = new URLSearchParams(location.search);
 	var search = params.get('search');
@@ -13,6 +13,12 @@ function previousPage(){
 	history.pushState({}, '', url);
 	document.getElementById('pageNumber').innerHTML = page;	
   displayNewGames();
+  sleep(25);
+  console.log("Game Count: " + gameCount)
+	if(gameCount < 1){
+  		window.location.reload();
+  		}
+	  	
 }
 
 function nextPage(){
@@ -33,6 +39,11 @@ function nextPage(){
 
 	document.getElementById('pageNumber').innerHTML = page;		
   displayNewGames();
+	console.log("Game Count: " + gameCount)
+	if(gameCount < 1){
+  		window.location.reload();
+  		}
+	  	
 }
 
 function changeFilter() {
@@ -68,11 +79,13 @@ function changeFilter() {
   	url.search = params1;
 	history.pushState({}, '', url);
 	
-	  	if(gameCount < 1){
-  		window.location.reload();
-  	}
 	
   	displayNewGames();
+  	console.log("Game Count: " + gameCount)
+	if(gameCount < 1){
+  		window.location.reload();
+  		}
+	  	
 }
 
 function displayNewGames(){
@@ -107,6 +120,7 @@ function displayNewGames(){
 			document.getElementById('gamelist').innerHTML = tRows;
 			return true;
 		}
+		gameCount = 0;
 		return false;
 	});
 	//console.log('apiResp: ' + apiResponse);
@@ -131,7 +145,6 @@ function getData(url) {
 
 function prepareHTMLContent(list) {
 	let output = "";
-	gameCount = 0;
 	for(let i in list ) {
 	const games = list[i];
 		output += `<tr><td>${games.name}</td><td>${games.publisherName}</td><td>${games.averageRatings}</td><td>${games.price}</td><td>${games.genreName}</td><td><button onClick="gotoGameViewPage(this.id)" id=${games.gameId}>More Info</button></td></tr>`;
@@ -142,4 +155,12 @@ function prepareHTMLContent(list) {
 
 function gotoGameViewPage(clicked_id){
 	location.replace(location.origin + "/whatshouldiplay2/gameView.html?gameId=" + clicked_id);
+}
+
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
 }

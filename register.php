@@ -35,8 +35,14 @@ $userId = $quantity + 1;
     //   $fmsg = "Username already exists.";
   }
     else{
-      $query = "INSERT INTO User VALUES ($userId, $age, '$username', '$password');";
-  	mysqli_query($connection, $query);
+      //$query = "INSERT INTO User VALUES ($userId, $age, '$username', '$password');";
+  $storedProc = "CALL addUser(?, ?, ?, ?)";
+   $stmt = mysqli_prepare($connection, $storedProc);
+   mysqli_stmt_bind_param($stmt,'ssis', $username,$password, $age, $userId);
+   mysqli_stmt_execute($stmt);
+   mysqli_stmt_close($stmt);
+
+  	mysqli_query($connection, "call addUser($userId,$age,'$username','$password');");
   	$_SESSION['username'] = $username;
     $username = $_SESSION['username'];
     $user_check_query = "SELECT userId FROM User WHERE username='$username' and password='$password';";

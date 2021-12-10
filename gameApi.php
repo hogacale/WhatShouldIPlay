@@ -23,7 +23,7 @@ switch ($type) {
    //debug_to_console("browse case");
    
        // Read the request type: game genre
-       $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName, g.gameId FROM Game g, Rating r, User u where g.gameId=r.gameId and g.requiredAge <= $userId and g.requiredAge <= u.age and u.userId=$userId order by Rand($random) LIMIT 25;";
+       $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName, g.gameId FROM Game g, Rating r, User u where g.gameId=r.ratingId and g.requiredAge <= $userId and g.requiredAge <= u.age and u.userId=$userId order by Rand($random) LIMIT 25;";
 
          // Execute SQL statement and obtain data
          //$response = getAllRecords($sql, $db, $parameterValues);
@@ -62,7 +62,7 @@ switch ($type) {
             $response = $error;
          } else {
            //All values
-               $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName, g.gameId FROM Game g, Rating r, User u where g.publisherName like '$publisher%' AND g.gameId=r.gameId AND g.name LIKE '%$search%' AND genreName like '%$genre%' AND r.averageRatings >= $rating and g.requiredAge <= u.age and u.userId=$userId order by name LIMIT 25 OFFSET $pageNumber;";
+               $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName, g.gameId FROM Game g, Rating r, User u where g.publisherName like '$publisher%' AND g.gameId=r.ratingId AND g.name LIKE '%$search%' AND genreName like '%$genre%' AND r.averageRatings >= $rating and g.requiredAge <= u.age and u.userId=$userId order by name LIMIT 25 OFFSET $pageNumber;";
                //echo $sql;
            }
            // Execute SQL statement and obtain data
@@ -74,11 +74,13 @@ switch ($type) {
         
    case 'gameView':
       $gameId = (isset($_GET['gameId'])) ? $_GET['gameId'] : '-1';
+      $userId = (isset($_GET['userId'])) ? $_GET['userId'] : '-1';
+      
       if ($gameId === '-1') {
             $response = $error;
          } else {
            //All values
-               $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName, g.releaseDate, g.platformName, g.categoryName, g.description, r.totalNegative, r.totalPositive FROM Game g, Rating r where g.gameId=r.gameId and g.gameId=$gameId;";
+               $sql = "SELECT g.name, g.publisherName, r.averageRatings, g.price, g.genreName, g.releaseDate, g.platformName, g.categoryName, g.description, r.totalNegative, r.totalPositive, c.totalPrice FROM Game g, Rating r, ShoppingCart c where c.scId=$userId and g.gameId=r.ratingId and g.gameId=$gameId;";
                //echo $sql;
            }
       $response = getAllRecords($sql, $db);
@@ -88,6 +90,7 @@ switch ($type) {
    case 'AddtoCart':
       $gameId = $gameId = (isset($_GET['gameId'])) ? $_GET['gameId'] : '-1';
       $userId = $userId = (isset($_GET['userId'])) ? $_GET['userId'] : '-1';
+      $totalPrice = (isset($_GET['totalPrice'])) ? $_GET['totalPrice'] : '-1';
       
       $scId = getCountRecords("select scId from ShoppingCart order by scId DESC limit 1;", $db);
       $scId = $scId[0][0] + 1;
@@ -95,11 +98,19 @@ switch ($type) {
             $response = $error;
          } else {
            //All values
-               $sql = "INSERT INTO ShoppingCart VALUES ($userId, null ,$gameId,$scId);";
+               $sql = "call makeBeIn(?,?);";
                //echo $sql;
            }
       echo "success!";
-      $response = getAllRecords($sql, $db);
+      $stm = $db->prepare("call makeBeIn(?,?);");
+      $stm->bindParam(2, $gameId, PDO::PARAM_STR);
+      $stm->bindParam(1, $userId, PDO::PARAM_STR);
+      // execute SQL statement
+      $stm->execute();
+      // fetch all records
+      $response = $stm->fetchAll(PDO::FETCH_ASSOC);
+      $stm = $db->prepare("update ShoppingCart set totalPrice=$totalPrice where scId=$userId;");
+      $stm->execute();
    break;
    
    case 'viewCart':
@@ -108,7 +119,7 @@ switch ($type) {
                $response = $error;
             } else {
             
-               $sql = "SELECT g.gameId, g.name, g.publisherName, r.averageRatings, g.price, c.scId FROM Game g, Rating r, User u, ShoppingCart c WHERE u.userId=c.userId and g.gameId=c.gameId and c.userId=$userId and r.gameId=g.gameId ORDER BY g.name LIMIT 25;";
+               $sql = "SELECT g.gameId, g.name, g.publisherName, r.averageRatings, g.price, c.totalPrice FROM Game g, Rating r, ShoppingCart c, BeIn b WHERE b.scId=c.scId and g.gameId=b.gameId and r.ratingId=g.gameId and b.scId=$userId LIMIT 25";
                //echo $sql;
 
 
@@ -117,15 +128,32 @@ switch ($type) {
       break;
       
    case 'removeFromCart':
-      $scId = (isset($_GET['scId'])) ? $_GET['scId'] : '-1';
-      if ($userId === '-1') {
+      $gameId = (isset($_GET['gameId'])) ? $_GET['gameId'] : '-1';
+      $userId = (isset($_GET['userId'])) ? $_GET['userId'] : '-1';
+      $totalPrice = (isset($_GET['totalPrice'])) ? $_GET['totalPrice'] : '-1';
+      if ($gameId === '-1') {
                $response = $error;
             } else {
             
-               $sql = "Delete from ShoppingCart where scId=$scId;";
+               $sql = "call removeFromCart(?);";
                //echo $sql;
               }
-         $response = getAllRecords($sql, $db);
+      $stm = $db->prepare("call removefromShoppingCart(?,?);");
+      $stm->bindParam(1, $gameId, PDO::PARAM_STR);
+      $stm->bindParam(2, $userId, PDO::PARAM_STR);
+      // execute SQL statement
+      $stm->execute();
+      // fetch all records
+      
+      $response = $stm->fetchAll(PDO::FETCH_ASSOC);
+      
+      $stm = $db->prepare("select price from Game where gameId=$gameId;");
+      $stm->execute();
+      $gamePrices = $stm->fetch(PDO::FETCH_ASSOC);
+      $gamePrice = $totalPrice - $gamePrices['price']; 
+      echo $gamePrice;
+      $stm = $db->prepare("update ShoppingCart set totalPrice=$gamePrice where scId=$userId");
+      $stm->execute();
       break;
       
    default :

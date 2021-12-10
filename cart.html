@@ -54,6 +54,7 @@
 displayShoppingCart()
 var totalPrice = 0;
 var gameCount = 0;
+
 function previousPage(){
   let params = new URLSearchParams(location.search);
 	var search = params.get('genre');
@@ -91,6 +92,7 @@ function displayShoppingCart() {
 			document.getElementById('shoppingcart').innerHTML = tRows;
 		}
 	});
+  document.getElementById('totalPrice').innerHTML = totalPrice;
 }
 function getData(url) {
 	if (url) {
@@ -114,8 +116,8 @@ function prepareHTMLContent(list) {
   gameCount = 0;
 	for(let i in list ) {
 	const games = list[i];
-		output += `<tr><td>${games.name} <button onClick="gotoGameViewPage(this.id)" id=${games.gameId}>More Info</button></td><td>${games.publisherName}</td><td>${games.averageRatings}</td><td>${games.price}</td><td><button onClick="removeFromCart(this.id)" id=${games.scId}>Remove</button></td></tr>`;
-	  totalPrice += parseFloat(games.price);
+		output += `<tr><td>${games.name} <button onClick="gotoGameViewPage(this.id)" id=${games.gameId}>More Info</button></td><td>${games.publisherName}</td><td>${games.averageRatings}</td><td value=games.price>${games.price}</td><td><button onClick="removeFromCart(this.id)" id=${games.gameId}>Remove</button></td></tr>`;
+	  totalPrice = parseFloat(games.totalPrice);
     gameCount += 1;
     console.log(gameCount);
   }
@@ -127,20 +129,23 @@ function prepareHTMLContent(list) {
 
 function removeFromCart(clicked_id){
   let userId = sessionStorage.getItem('userId');
-  
-	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=removeFromCart&scId=${clicked_id}`).then(function(response) {
+  console.log("Removing game with " + clicked_id + " id From Cart");
+	getData(`http://localhost/whatshouldiplay2/gameApi.php?type=removeFromCart&gameId=${clicked_id}&userId=${userId}&totalPrice=${totalPrice}`).then(function(response) {
 		//console.log(response);
 	});
+  alert("Removed from cart");
   console.log("Before sleep");
-  sleep(25);
+  //sleep(100);
   console.log("After sleep");
-  gameCount -= 1;
-  if(gameCount <= 0){
-    window.location.reload();
-  }
+ // gameCount -= 1;
+  //if(gameCount <= 0){
+   // window.location.reload();
+  //}
+  
   displayShoppingCart();
   
 }
+
 function gotoGameViewPage(clicked_id){
 	location.replace(location.origin + "/whatshouldiplay2/gameView.html?gameId=" + clicked_id);
 }
